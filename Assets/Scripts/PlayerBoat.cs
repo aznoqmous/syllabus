@@ -10,12 +10,26 @@ public class PlayerBoat : MonoBehaviour
     Vector2 _movementInput = new Vector2();
     Camera _camera;
 
+    public static PlayerBoat Instance;
+
+    public Vector3 ProjectedPosition { get { return transform.position + _ship.Rigidbody.linearVelocity; } }
+
+    public float MaxHp { get { return _ship.MaxHp;  } }
+    public float CurrentHp { get { return _ship.CurrentHp; } }
+
+    private void Awake()
+    {
+        Instance = this;
+    }
+
     void Start()
     {
         _camera = Camera.main;
         _playerInputActions = new InputSystem_Actions();
         _playerInputActions.Player.Move.performed += PlayerMove;
         _playerInputActions.Player.Move.Enable();
+
+        _ship.OnTakeDamage += StatsUI.Instance.UpdatePlayerHP;
     }
 
     void Update()
@@ -28,8 +42,8 @@ public class PlayerBoat : MonoBehaviour
             if(Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out ray, Mathf.Infinity, LayerMask.GetMask("Water")))
             {
                 Vector3 pos = ray.point;
-                print(pos);
-                _ship.FireBullet(pos - transform.position);
+                //_ship.FireBullet(pos - transform.position);
+                _ship.FireBulletTowardPosition(pos);
             }
             
         }

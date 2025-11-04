@@ -8,7 +8,9 @@ public class Bullet : MonoBehaviour
     [SerializeField] WaterSplash _waterSplashPrefab;
     [SerializeField] ParticleSystem _explosionParticlesPrefab;
     Vector3 _targetPosition;
-    
+
+    public System.Action OnDestroy;
+
     void Start()
     {
         transform.localScale = Vector3.one * 5.0f;
@@ -24,19 +26,19 @@ public class Bullet : MonoBehaviour
         Ship ship = collision.collider.GetComponent<Ship>();
         if (ship) {
             ship.TakeDamage(1f);
-            Destroy(gameObject);
-            Instantiate(_explosionParticlesPrefab, transform.position, Quaternion.identity);
         }
-        else
-        {
-            // water
-            Instantiate(_waterSplashPrefab, transform.position, Quaternion.identity);
-            Destroy(gameObject);
-        }
+
+        MeshCollider water = collision.collider.GetComponent<MeshCollider>();
+        if(water) Instantiate(_waterSplashPrefab, transform.position, Quaternion.identity);
+        else Instantiate(_explosionParticlesPrefab, transform.position, Quaternion.identity);
+        OnDestroy?.Invoke();    
+        Destroy(gameObject);
     }
 
     public void Fire(Vector3 direction)
     {
         _rigidbody.AddForce((direction.normalized + Vector3.up * _verticalForce * direction.magnitude) * _force);
     }
+
+    
 }

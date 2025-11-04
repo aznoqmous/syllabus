@@ -10,7 +10,7 @@ public class Loot : MonoBehaviour
     void Start()
     {
         foreach (GameObject model in _models) model.SetActive(false);
-        _models[Mathf.FloorToInt(_models.Count * Random.value)].SetActive(true);
+        _models.PickRandom().SetActive(true);
     }
 
     void Update()
