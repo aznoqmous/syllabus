@@ -1,8 +1,10 @@
+using TMPro;
 using UnityEngine;
 
 public class Ship : MonoBehaviour
 {
     [SerializeField] public Rigidbody Rigidbody;
+    [SerializeField] BoxCollider _collider;
     [SerializeField] float _speed = 3.0f;
     [SerializeField] float _acceleration = 0.01f;
     [SerializeField] Bullet _bulletPrefab;
@@ -18,10 +20,12 @@ public class Ship : MonoBehaviour
     [SerializeField] ParticleSystem _damageParticleSystem;
     [SerializeField] ParticleSystem _explosionParticleSystem;
     [SerializeField] ParticleSystem _speedParticles;
+    [SerializeField] TrailRenderer _trailRenderer;
 
     [SerializeField] Animator _shipAnimator;
 
     [SerializeField] LayerMask _bulletLayerMask;
+    [SerializeField] Material _trailMaterial;
 
     public Vector3 TargetVelocity;
 
@@ -30,11 +34,16 @@ public class Ship : MonoBehaviour
     }}
 
     public System.Action OnTakeDamage;
+    public System.Action OnHeal;
+    public System.Action OnDie;
 
     void Start()
     {
         _currentHp = _maxHp;
         UpdateParticles();
+
+        _trailMaterial = _trailRenderer.material;
+        _trailRenderer.transform.SetParent(transform, true);
     }
 
     void Update()
@@ -50,6 +59,9 @@ public class Ship : MonoBehaviour
         }
         var main = _speedParticles.main;
         main.startLifetime = Rigidbody.linearVelocity.magnitude / 20f;
+
+        _trailRenderer.time = Rigidbody.linearVelocity.magnitude / 2f;
+        _trailMaterial.SetFloat("_Length", Rigidbody.linearVelocity.magnitude / 2f);
     }
 
     public Bullet FireBullet(Vector3 direction)
@@ -104,6 +116,8 @@ public class Ship : MonoBehaviour
     public void Die()
     {
         _shipAnimator.Play("Death");
+        _collider.enabled = false;
+        OnDie?.Invoke();
     }
     public void Erase()
     {
@@ -123,6 +137,12 @@ public class Ship : MonoBehaviour
         UpdateParticles();
         OnTakeDamage?.Invoke();
         if (_currentHp <= 0) Die();
+    }
+
+    public void GainHealth(float value)
+    {
+        _currentHp = Mathf.Clamp(_currentHp + value, 0, _maxHp);
+        OnHeal?.Invoke();
     }
 
     public void UpdateParticles()

@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Foe : MonoBehaviour
 {
@@ -18,7 +19,28 @@ public class Foe : MonoBehaviour
     [SerializeField] float _fireDistance = 8f;
     float _lastFireTime = 0f;
 
-    [SerializeField] Canvas _crosshairPrefab;
+    [Header("UIs")]
+    [SerializeField] Canvas _statsUI;
+    [SerializeField] Slider _hpSlider;
+    [SerializeField] Slider _timedHpSlider;
+    //[SerializeField] Canvas _crosshairPrefab;
+
+    [Header("Loot")]
+    [SerializeField] Loot _lootPrefab;
+
+    private void Start()
+    {
+        UpdateHp();
+        _timedHpSlider.value = _hpSlider.value;
+        _ship.OnTakeDamage += UpdateHp;
+        _ship.OnDie += DropLoot;
+    }
+
+    private void Update()
+    {
+        _statsUI.transform.LookAt(Camera.main.transform.position);
+        _timedHpSlider.value = Mathf.Lerp(_timedHpSlider.value, _hpSlider.value, Time.deltaTime);
+    }
 
     void FixedUpdate()
     {
@@ -33,10 +55,10 @@ public class Foe : MonoBehaviour
                 Bullet bullet = _ship.FireBulletTowardPosition(firePosition);
                 _lastFireTime = Time.time;
 
-                firePosition.y = 0.2f;
-                Canvas ch = Instantiate(_crosshairPrefab, firePosition, Quaternion.identity);
-                ch.transform.eulerAngles = new Vector3(0, Random.value * 360, 0);
-                bullet.OnDestroy += () => Destroy(ch);
+                // firePosition.y = 0.2f;
+                // Canvas ch = Instantiate(_crosshairPrefab, firePosition, Quaternion.identity);
+                // ch.transform.eulerAngles = new Vector3(0, Random.value * 360, 0);
+                // bullet.OnDestroy += () => Destroy(ch);
             }
         }
         float angle = Mathf.Atan2(_ship.Rigidbody.linearVelocity.x, _ship.Rigidbody.linearVelocity.z);
@@ -76,7 +98,7 @@ public class Foe : MonoBehaviour
         Vector3 desiredPosition = PlayerBoat.Instance.transform.position - toPlayerDir * _orbitRadius;
         Vector3 moveDir = (desiredPosition - transform.position).normalized + orbitDir * _orbitSpeed;
 
-        // --- OBSTACLE AVOIDANCE ---
+        // OBSTACLE AVOIDANCE
         Vector3 avoidDir = Vector3.zero;
         bool obstacleDetected = false;
 
@@ -116,5 +138,16 @@ public class Foe : MonoBehaviour
         {
             _ship.TargetVelocity = moveDir * _moveForce;
         }
+    }
+
+    void UpdateHp()
+    {
+        _statsUI.gameObject.SetActive(_ship.CurrentHp < _ship.MaxHp && _ship.IsAlive);
+        _hpSlider.value = _ship.CurrentHp / _ship.MaxHp;
+    }
+
+    void DropLoot()
+    {
+        Instantiate(_lootPrefab, transform.position, Quaternion.identity);
     }
 }

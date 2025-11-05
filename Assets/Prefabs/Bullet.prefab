@@ -43,7 +43,7 @@ ParticleSystem:
   serializedVersion: 8
   lengthInSec: 5
   simulationSpeed: 1
-  stopAction: 0
+  stopAction: 2
   cullingMode: 0
   ringBufferMode: 0
   ringBufferLoopRange: {x: 0, y: 1}
@@ -4886,6 +4886,7 @@ MonoBehaviour:
   _verticalForce: 0.0015
   _waterSplashPrefab: {fileID: 1063766214487928553, guid: b229784c08950a74db276cb5fda11565, type: 3}
   _explosionParticlesPrefab: {fileID: 7480626176527330659, guid: 102103a152add094687927265ea46203, type: 3}
+  _smokeParticles: {fileID: 1260423200340988337}
 --- !u!135 &85805344594072359
 SphereCollider:
   m_ObjectHideFlags: 0

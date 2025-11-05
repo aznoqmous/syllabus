@@ -7,6 +7,7 @@ public class Bullet : MonoBehaviour
     [SerializeField] float _verticalForce = 0.01f;
     [SerializeField] WaterSplash _waterSplashPrefab;
     [SerializeField] ParticleSystem _explosionParticlesPrefab;
+    [SerializeField] ParticleSystem _smokeParticles;
     Vector3 _targetPosition;
 
     public System.Action OnDestroy;
@@ -31,6 +32,10 @@ public class Bullet : MonoBehaviour
         MeshCollider water = collision.collider.GetComponent<MeshCollider>();
         if(water) Instantiate(_waterSplashPrefab, transform.position, Quaternion.identity);
         else Instantiate(_explosionParticlesPrefab, transform.position, Quaternion.identity);
+
+        _smokeParticles.EnableEmission(false);
+        _smokeParticles.transform.parent = null;
+
         OnDestroy?.Invoke();    
         Destroy(gameObject);
     }

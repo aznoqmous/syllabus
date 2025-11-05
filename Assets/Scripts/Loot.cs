@@ -5,16 +5,20 @@ using System.Collections.Generic;
 public class Loot : MonoBehaviour
 {
 
-    [SerializeField] List<GameObject> _models;
+    [SerializeField] List<LootResource> _lootResources;
+    [SerializeField] Transform _modelContainer;
+    LootResource _resource;
+    public LootResource Resource { get { return _resource;  } }
 
-    void Start()
+    private void Start()
     {
-        foreach (GameObject model in _models) model.SetActive(false);
-        _models.PickRandom().SetActive(true);
+        LoadResource(_lootResources.PickRandom());
     }
 
-    void Update()
+    void LoadResource(LootResource resource)
     {
-        
+        foreach (Transform t in _modelContainer) Destroy(t.gameObject);
+        Instantiate(resource.Model, _modelContainer);
+        _resource = resource;
     }
 }

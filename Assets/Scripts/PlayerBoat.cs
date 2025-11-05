@@ -17,6 +17,9 @@ public class PlayerBoat : MonoBehaviour
     public float MaxHp { get { return _ship.MaxHp;  } }
     public float CurrentHp { get { return _ship.CurrentHp; } }
 
+    public int _maxBullets = 10;
+    public int _currentBullets = 10;
+
     private void Awake()
     {
         Instance = this;
@@ -27,9 +30,10 @@ public class PlayerBoat : MonoBehaviour
         _camera = Camera.main;
         _playerInputActions = new InputSystem_Actions();
         _playerInputActions.Player.Move.performed += PlayerMove;
-        _playerInputActions.Player.Move.Enable();
+        _playerInputActions.Player.Enable();
 
         _ship.OnTakeDamage += StatsUI.Instance.UpdatePlayerHP;
+        _ship.OnHeal += StatsUI.Instance.UpdatePlayerHP;
     }
 
     void Update()
@@ -37,7 +41,6 @@ public class PlayerBoat : MonoBehaviour
         _camera.transform.LookAt(transform.position);
 
         if (Input.GetMouseButtonDown(0)) {
-            print("MOUSE BUTTON");
             RaycastHit ray;
             if(Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out ray, Mathf.Infinity, LayerMask.GetMask("Water")))
             {
@@ -60,6 +63,25 @@ public class PlayerBoat : MonoBehaviour
         _cameraContainer.transform.position = transform.position;
 
         //Quaternion.Slerp()
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        Loot loot = collision.collider.GetComponent<Loot>();
+        if (loot)
+        {
+            print(loot);
+            switch (loot.Resource.Effect)
+            {
+                case LootEffect.RestoreBullet:
+                    _currentBullets = Mathf.Clamp(_currentBullets + (int) loot.Resource.Value, 0, _maxBullets);
+                    break;
+                case LootEffect.RestoreHealth:
+                    _ship.GainHealth(loot.Resource.Value);
+                    break;
+            }
+            Destroy(loot.gameObject);
+        }
     }
 
     void PlayerMove(InputAction.CallbackContext cb)
