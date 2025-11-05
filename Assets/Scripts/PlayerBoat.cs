@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -6,6 +7,12 @@ public class PlayerBoat : MonoBehaviour
     [SerializeField] InputSystem_Actions _playerInputActions;
     [SerializeField] GameObject _cameraContainer;
     [SerializeField] Ship _ship;
+
+    [SerializeField] BulletsUI _bulletCanvas;
+    int _currentBullets;
+    public int CurrentBullets { get { return _currentBullets; }}
+    [SerializeField] int _maxBullets = 3;
+    public int MaxBullets { get { return _maxBullets; }}    
 
     Vector2 _movementInput = new Vector2();
     Camera _camera;
@@ -17,8 +24,10 @@ public class PlayerBoat : MonoBehaviour
     public float MaxHp { get { return _ship.MaxHp;  } }
     public float CurrentHp { get { return _ship.CurrentHp; } }
 
-    public int _maxBullets = 10;
-    public int _currentBullets = 10;
+    [SerializeField] float _reloadTime = 1f;
+    float _currentReloadTime = 0f;
+
+
 
     private void Awake()
     {
@@ -27,6 +36,9 @@ public class PlayerBoat : MonoBehaviour
 
     void Start()
     {
+        _currentBullets = _maxBullets;
+        _bulletCanvas.UpdatePlayerBullets();
+
         _camera = Camera.main;
         _playerInputActions = new InputSystem_Actions();
         _playerInputActions.Player.Move.performed += PlayerMove;
@@ -40,7 +52,9 @@ public class PlayerBoat : MonoBehaviour
     {
         _camera.transform.LookAt(transform.position);
 
-        if (Input.GetMouseButtonDown(0)) {
+        if (Input.GetMouseButtonDown(0) && _currentBullets > 0) {
+            _currentBullets--;
+            _bulletCanvas.UpdatePlayerBullets();
             RaycastHit ray;
             if(Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out ray, Mathf.Infinity, LayerMask.GetMask("Water")))
             {
@@ -48,7 +62,17 @@ public class PlayerBoat : MonoBehaviour
                 //_ship.FireBullet(pos - transform.position);
                 _ship.FireBulletTowardPosition(pos);
             }
-            
+        }
+
+        _bulletCanvas.transform.LookAt(Camera.main.transform.position);
+
+        if (_currentBullets < _maxBullets) {
+            _currentReloadTime += Time.deltaTime;
+            if (_currentReloadTime > _reloadTime) {
+                _currentBullets++;
+                _bulletCanvas.UpdatePlayerBullets();
+                _currentReloadTime = 0;
+            }
         }
     }
 

@@ -3,7 +3,12 @@ using UnityEngine.UI;
 
 public class Foe : MonoBehaviour
 {
+    [Header("Spawn")]
+    [SerializeField] float _cost = 1f;
+    public float Cost { get { return _cost; } }
+
     [SerializeField] Ship _ship;
+    public Ship Ship { get { return _ship; } }
 
     [Header("Movement")]
     [SerializeField] float _orbitSpeed = 3f;
@@ -27,6 +32,9 @@ public class Foe : MonoBehaviour
 
     [Header("Loot")]
     [SerializeField] Loot _lootPrefab;
+    Vector3 _orbitDir;
+
+    float _currentSpeed = 0f;
 
     private void Start()
     {
@@ -34,7 +42,13 @@ public class Foe : MonoBehaviour
         _timedHpSlider.value = _hpSlider.value;
         _ship.OnTakeDamage += UpdateHp;
         _ship.OnDie += DropLoot;
+        _currentSpeed = _moveForce;
+
+        Vector3 _orbitDir = Random.value < 0.5 ? Vector3.up : Vector3.down;
+
+        transform.localScale = Vector3.zero;
     }
+
 
     private void Update()
     {
@@ -46,6 +60,7 @@ public class Foe : MonoBehaviour
     {
         if (_ship.IsAlive && PlayerBoat.Instance)
         {
+            
             OrbitAroundPlayer();
 
             if ((PlayerBoat.Instance.transform.position - transform.position).magnitude < _fireDistance && Time.time - _lastFireTime > _fireRate)
@@ -63,6 +78,7 @@ public class Foe : MonoBehaviour
         }
         float angle = Mathf.Atan2(_ship.Rigidbody.linearVelocity.x, _ship.Rigidbody.linearVelocity.z);
         transform.eulerAngles = new Vector3(0, angle * Mathf.Rad2Deg, 0);
+        _moveForce = PlayerBoat.Instance.transform.position.DistanceTo(transform.position) > 100 ? _currentSpeed * 2f : _currentSpeed;
     }
 
     void OrbitAroundPlayer()
@@ -112,10 +128,16 @@ public class Foe : MonoBehaviour
         // Left and right ray directions
         Quaternion leftRot = Quaternion.AngleAxis(-_sideRayAngle, Vector3.up);
         Quaternion rightRot = Quaternion.AngleAxis(_sideRayAngle, Vector3.up);
-        Vector3 leftDir = leftRot * moveDir;
-        Vector3 rightDir = rightRot * moveDir;
+
+        Vector3 move = _ship.Rigidbody.linearVelocity.normalized;
+        Vector3 leftDir = leftRot * move;
+        Vector3 rightDir = rightRot * move;
+
+
+        Debug.DrawLine(transform.position, transform.position + move * _obstacleCheckDistance);
 
         // Left raycast
+        Debug.DrawLine(transform.position, transform.position + leftDir * _obstacleCheckDistance, Color.green);
         if (Physics.Raycast(transform.position, leftDir, out RaycastHit hitLeft, _obstacleCheckDistance, _obstacleMask))
         {
             avoidDir += Vector3.Reflect(leftDir, hitLeft.normal);
@@ -123,6 +145,7 @@ public class Foe : MonoBehaviour
         }
 
         // Right raycast
+        Debug.DrawLine(transform.position, transform.position + rightDir * _obstacleCheckDistance, Color.red);
         if (Physics.Raycast(transform.position, rightDir, out RaycastHit hitRight, _obstacleCheckDistance, _obstacleMask))
         {
             avoidDir += Vector3.Reflect(rightDir, hitRight.normal);

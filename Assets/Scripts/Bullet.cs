@@ -34,6 +34,8 @@ public class Bullet : MonoBehaviour
         else Instantiate(_explosionParticlesPrefab, transform.position, Quaternion.identity);
 
         _smokeParticles.EnableEmission(false);
+        var main = _smokeParticles.main;
+        main.loop = false;
         _smokeParticles.transform.parent = null;
 
         OnDestroy?.Invoke();    

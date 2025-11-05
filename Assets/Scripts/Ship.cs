@@ -6,6 +6,8 @@ public class Ship : MonoBehaviour
     [SerializeField] public Rigidbody Rigidbody;
     [SerializeField] BoxCollider _collider;
     [SerializeField] float _speed = 3.0f;
+    public float Speed { get { return _speed; } set { _speed = value; } }
+
     [SerializeField] float _acceleration = 0.01f;
     [SerializeField] Bullet _bulletPrefab;
     [SerializeField] GameObject _bulletContainer;
@@ -25,7 +27,7 @@ public class Ship : MonoBehaviour
     [SerializeField] Animator _shipAnimator;
 
     [SerializeField] LayerMask _bulletLayerMask;
-    [SerializeField] Material _trailMaterial;
+    Material _trailMaterial;
 
     public Vector3 TargetVelocity;
 
@@ -43,7 +45,6 @@ public class Ship : MonoBehaviour
         UpdateParticles();
 
         _trailMaterial = _trailRenderer.material;
-        _trailRenderer.transform.SetParent(transform, true);
     }
 
     void Update()
@@ -51,6 +52,7 @@ public class Ship : MonoBehaviour
         transform.localScale = Vector3.Lerp(transform.localScale, Vector3.one, Time.deltaTime * 5.0f);
     }
 
+    float _animVelocity = 0f;
     private void FixedUpdate()
     {
         if (IsAlive)
@@ -60,8 +62,9 @@ public class Ship : MonoBehaviour
         var main = _speedParticles.main;
         main.startLifetime = Rigidbody.linearVelocity.magnitude / 20f;
 
-        _trailRenderer.time = Rigidbody.linearVelocity.magnitude / 2f;
-        _trailMaterial.SetFloat("_Length", Rigidbody.linearVelocity.magnitude / 2f);
+        _animVelocity = Mathf.Lerp(_animVelocity, Rigidbody.linearVelocity.magnitude / 2f, Time.deltaTime * 2f);
+        _trailRenderer.time = _animVelocity;
+        _trailMaterial.SetFloat("_Length", _animVelocity);
     }
 
     public Bullet FireBullet(Vector3 direction)
@@ -129,7 +132,7 @@ public class Ship : MonoBehaviour
         Instantiate(_explosionParticleSystem, transform.position + new Vector3(Random.value, Random.value, Random.value), Quaternion.identity);
     }
 
-    public void TakeDamage(float value)
+     public void TakeDamage(float value)
     {
         if (_currentHp <= 0) return;
         _currentHp -= value;
@@ -142,6 +145,7 @@ public class Ship : MonoBehaviour
     public void GainHealth(float value)
     {
         _currentHp = Mathf.Clamp(_currentHp + value, 0, _maxHp);
+        UpdateParticles();
         OnHeal?.Invoke();
     }
 
