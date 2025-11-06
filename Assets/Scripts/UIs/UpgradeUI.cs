@@ -31,7 +31,7 @@ public class UpgradeUI : MonoBehaviour
 
     public int GetCost()
     {
-        return (int) Mathf.Pow(_upgradeResource.StartingCost, _currentLevel + 1);
+        return (int) Mathf.Pow(2, _currentLevel) * _upgradeResource.StartingCost;
     }
 
     public void UpdateState()

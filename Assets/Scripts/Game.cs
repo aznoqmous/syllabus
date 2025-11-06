@@ -9,7 +9,8 @@ public class Game : MonoBehaviour
     }
 
     [SerializeField] StatsUI _statsUI;
-    bool _isPlaying = true;
+    [SerializeField] bool _isPlaying = false;
+    [SerializeField] Canvas _titleCanvas;
     public bool IsPlaying { get { return _isPlaying; } set { _isPlaying = value; } }    
 
     void Start()
@@ -40,5 +41,12 @@ public class Game : MonoBehaviour
     {
         Time.timeScale = Mathf.Min(1f, Mathf.Lerp(Time.timeScale, value, lerp));
         Time.fixedDeltaTime = 0.02f * Time.timeScale;
+    }
+
+    public void Play()
+    {
+        _isPlaying = true;
+        _titleCanvas.gameObject.SetActive(false);
+        _statsUI.gameObject.SetActive(true);
     }
 }

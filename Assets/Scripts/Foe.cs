@@ -19,7 +19,7 @@ public class Foe : MonoBehaviour
     [SerializeField] float _obstacleCheckDistance = 2f;
     [SerializeField] float _sideRayAngle = 30f;
     [SerializeField] LayerMask _obstacleMask;
-
+    float _currentSpeed = 0f;
 
     [Header("Fire")]
     [SerializeField] float _fireRate = 2f;
@@ -36,9 +36,8 @@ public class Foe : MonoBehaviour
     [SerializeField] Loot _lootPrefab;
     [SerializeField] LootResource _coinResource;
 
-    Vector3 _orbitDir;
 
-    float _currentSpeed = 0f;
+
 
     private void Start()
     {
@@ -90,24 +89,6 @@ public class Foe : MonoBehaviour
 
     void OrbitAroundPlayer()
     {
-        /*Vector3 toPlayer = (PlayerBoat.Instance.transform.position - transform.position);
-        float distance = toPlayer.magnitude;
-        Vector3 toPlayerDir = toPlayer.normalized;
-
-        Vector3 orbitDir = Vector3.Cross(Vector3.up, toPlayerDir).normalized;
-
-        Vector3 desiredPosition = PlayerBoat.Instance.transform.position - toPlayerDir * _orbitRadius;
-        Vector3 moveDir = (desiredPosition - transform.position).normalized + orbitDir * _orbitSpeed;
-
-        if (Physics.Raycast(transform.position, moveDir, out RaycastHit hit, _obstacleCheckDistance, _obstacleMask))
-        {
-            Vector3 avoidDir = Vector3.Reflect(moveDir, hit.normal);
-            _ship.TargetVelocity = avoidDir * _avoidForce;
-        }
-        else
-        {
-            _ship.TargetVelocity = moveDir * _moveForce;
-        }*/
 
         // Direction from enemy to player
         Vector3 toPlayer = (PlayerBoat.Instance.transform.position - transform.position);
@@ -141,10 +122,10 @@ public class Foe : MonoBehaviour
         Vector3 rightDir = rightRot * move;
 
 
-        Debug.DrawLine(transform.position, transform.position + move * _obstacleCheckDistance);
+        //Debug.DrawLine(transform.position, transform.position + move * _obstacleCheckDistance);
 
         // Left raycast
-        Debug.DrawLine(transform.position, transform.position + leftDir * _obstacleCheckDistance, Color.green);
+        //Debug.DrawLine(transform.position, transform.position + leftDir * _obstacleCheckDistance, Color.green);
         if (Physics.Raycast(transform.position, leftDir, out RaycastHit hitLeft, _obstacleCheckDistance, _obstacleMask))
         {
             avoidDir += Vector3.Reflect(leftDir, hitLeft.normal);
@@ -152,7 +133,7 @@ public class Foe : MonoBehaviour
         }
 
         // Right raycast
-        Debug.DrawLine(transform.position, transform.position + rightDir * _obstacleCheckDistance, Color.red);
+        //Debug.DrawLine(transform.position, transform.position + rightDir * _obstacleCheckDistance, Color.red);
         if (Physics.Raycast(transform.position, rightDir, out RaycastHit hitRight, _obstacleCheckDistance, _obstacleMask))
         {
             avoidDir += Vector3.Reflect(rightDir, hitRight.normal);
@@ -186,4 +167,6 @@ public class Foe : MonoBehaviour
             l.LoadResource(_coinResource);
         }
     }
+
+    
 }

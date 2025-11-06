@@ -1,10 +1,13 @@
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class StatsUI : MonoBehaviour
 {
     [SerializeField] HeartUI _heartUIPrefab;
     [SerializeField] GameObject _heartsContainer;
+    [SerializeField] Transform _renderedCoinTransform;
+    [SerializeField] TextMeshProUGUI _coinText;
 
     List<HeartUI> _hearts = new List<HeartUI>();
 
@@ -17,13 +20,15 @@ public class StatsUI : MonoBehaviour
 
     void Start()
     {
+        UpdateCoins();
         UpdatePlayerMaxHp();
         UpdatePlayerHP();
     }
 
     void Update()
     {
-        
+        _renderedCoinTransform.eulerAngles -= new Vector3(0, Time.deltaTime * 20f, 0);
+        _renderedCoinTransform.localScale = Vector3.Lerp(_renderedCoinTransform.localScale, Vector3.one * 3f, Time.deltaTime * 10f);
     }
 
     public void UpdatePlayerMaxHp()
@@ -40,5 +45,11 @@ public class StatsUI : MonoBehaviour
             HeartUI heart = _hearts[i];
             heart.SetState(i < PlayerBoat.Instance.CurrentHp);
         }
+    }
+
+    public void UpdateCoins()
+    {
+        _renderedCoinTransform.localScale *= 2f;
+        _coinText.text = PlayerBoat.Instance.Coins.ToString();
     }
 }

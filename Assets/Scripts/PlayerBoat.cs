@@ -53,7 +53,11 @@ public class PlayerBoat : MonoBehaviour
     {
         _water.transform.position = transform.position;
 
-        if (!Game.Instance.IsPlaying) return;
+        if (!Game.Instance.IsPlaying)
+        {
+            _ship.TargetVelocity = Vector3.forward;
+            return;
+        }
 
         if (Input.GetMouseButtonDown(0) && _currentBullets > 0) {
             _currentBullets--;
@@ -81,12 +85,17 @@ public class PlayerBoat : MonoBehaviour
 
     private void FixedUpdate()
     {
-        _movementInput = _playerInputActions.Player.Move.ReadValue<Vector2>();
-        Vector3 velocity = new Vector3(_movementInput.x, 0, _movementInput.y);
-        _ship.TargetVelocity = velocity;
-
-        float angle = Mathf.Atan2(_ship.Rigidbody.linearVelocity.x, _ship.Rigidbody.linearVelocity.z);
-        _ship.Rigidbody.transform.eulerAngles = new Vector3(0, angle * Mathf.Rad2Deg, 0);
+        if (Game.Instance.IsPlaying)
+        {
+            _movementInput = _playerInputActions.Player.Move.ReadValue<Vector2>();
+            Vector3 velocity = new Vector3(_movementInput.x, 0, _movementInput.y);
+            _ship.TargetVelocity = velocity;
+        }
+        if (_ship.Rigidbody.linearVelocity.magnitude > 0.1f)
+        {
+            float angle = Mathf.Atan2(_ship.Rigidbody.linearVelocity.x, _ship.Rigidbody.linearVelocity.z);
+            _ship.Rigidbody.transform.eulerAngles = new Vector3(0, angle * Mathf.Rad2Deg, 0);
+        }
         _cameraContainer.transform.position = transform.position;
     }
 
@@ -126,10 +135,12 @@ public class PlayerBoat : MonoBehaviour
     public void GainCoins(int amount)
     {
         _coins += amount;
+        _statsCanvas.UpdateCoins();
     }
     public void LoseCoins(int amount)
     {
         _coins -= amount;
+        _statsCanvas.UpdateCoins();
     }
 
     float _attractionDistance = 10;
@@ -149,7 +160,7 @@ public class PlayerBoat : MonoBehaviour
                 _statsCanvas.UpdatePlayerHP();
                 break;
             case UpgradeType.Speed:
-                _ship.Speed += 10;
+                _ship.Speed *= 1.3f;
                 break;
             case UpgradeType.AttractionDistance:
                 _attractionDistance *= 1.5f;

@@ -16,6 +16,8 @@ public class EntityManager : MonoBehaviour
 
     void Update()
     {
+        if (!Game.Instance.IsPlaying) return;
+
         _credits += Time.deltaTime * (Time.time / 60f + 1f);
         if (Time.time > _nextSpawnTime)
         {

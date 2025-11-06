@@ -44,6 +44,8 @@ public class Ship : MonoBehaviour
     float _lastDamageTime = 0;
     float _damageAnimationTime = 0.5f;
 
+
+
     public System.Action OnTakeDamage;
     public System.Action OnHeal;
     public System.Action OnDie;
@@ -63,7 +65,6 @@ public class Ship : MonoBehaviour
 
     void Update()
     {
-        if (!Game.Instance.IsPlaying) return;
         float distance = transform.position.DistanceTo(PlayerBoat.Instance.transform.position);
         if (distance > _hideDistance)
         {
@@ -87,7 +88,6 @@ public class Ship : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (!Game.Instance.IsPlaying) return;
         if (IsAlive)
         {
             Rigidbody.linearVelocity = Vector3.Lerp(Rigidbody.linearVelocity, TargetVelocity * _speed, _acceleration);
@@ -102,6 +102,8 @@ public class Ship : MonoBehaviour
 
     public Bullet FireBullet(Vector3 direction)
     {
+        PlayFireSound();
+        transform.localScale = Vector3.one * 1.2f;
         Bullet newBullet = Instantiate(_bulletPrefab, _bulletContainer.transform.position, Quaternion.identity);
         newBullet.gameObject.layer = Mathf.RoundToInt(Mathf.Log(_bulletLayerMask.value, 2));
         newBullet.Fire(direction);
@@ -151,6 +153,7 @@ public class Ship : MonoBehaviour
 
     public void Die()
     {
+        PlayDieSound();
         _shipAnimator.Play("Death");
         _collider.enabled = false;
         OnDie?.Invoke();
@@ -168,6 +171,7 @@ public class Ship : MonoBehaviour
      public void TakeDamage(float value)
     {
         if (_currentHp <= 0) return;
+        PlayHitSound();
         _currentHp -= value;
         transform.localScale = Vector3.one * 1.2f;
         UpdateParticles();
@@ -192,5 +196,28 @@ public class Ship : MonoBehaviour
 
         var emission = _damageParticleSystem.emission;
         emission.rateOverTime = ratio * 10.0f;
+    }
+
+    [Header("Sound")]
+    [SerializeField] AudioSource _fireAudio;
+    [SerializeField] AudioSource _hitAudio;
+    [SerializeField] AudioSource _dieAudio;
+
+    void PlayHitSound()
+    {
+        _hitAudio.pitch = Random.Range(0.9f, 1.1f); ;
+        _hitAudio.Play();
+    }
+
+    void PlayFireSound()
+    {
+        _fireAudio.pitch = Random.Range(0.9f, 1.1f); ;
+        _fireAudio.Play();
+    }
+
+    void PlayDieSound()
+    {
+        _dieAudio.pitch = Random.Range(0.9f, 1.1f); ;
+        _dieAudio.Play();
     }
 }

@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 
 public class Shop : MonoBehaviour
 {
@@ -10,8 +11,11 @@ public class Shop : MonoBehaviour
     [SerializeField] List<UpgradeUI> _upgrades = new List<UpgradeUI>();
     [SerializeField] InputSystem_Actions _playerInputActions;
     [SerializeField] Canvas _shopCanvas;
+    [SerializeField] ParticleSystem _disappearParticleSystem;
+    [SerializeField] Button _exitButton;
     bool _isActive { get { return PlayerBoat.Instance.transform.position.DistanceTo(transform.position) < _activationDistance; } }
     bool _isOpened = false;
+    bool _purchased = false;
     private void Start()
     {
         _playerInputActions = new InputSystem_Actions();
@@ -21,12 +25,14 @@ public class Shop : MonoBehaviour
         {
             upgrade.OnPurchased += () =>
             {
+                _purchased = true;
                 foreach (UpgradeUI upgrade in _upgrades)
                 {
                     upgrade.UpdateState();
                 }
             };
         }
+
     }
 
     void Update()
@@ -55,13 +61,19 @@ public class Shop : MonoBehaviour
         }
     }
 
-    void CloseShop()
+    public void CloseShop()
     {
         _isOpened = false;
         _shopCanvas.gameObject.SetActive(false);
         Game.Instance.IsPlaying = true;
         Game.Instance.SetTargetTimeScale(1.0f);
 
-        transform.position = PlayerBoat.Instance.transform.position + Quaternion.AngleAxis(Random.value * 360f, Vector3.up) * Vector3.left * 200f;
+        if(_purchased)
+        {
+            Instantiate(_disappearParticleSystem, transform.position, Quaternion.identity);
+            transform.position = PlayerBoat.Instance.transform.position + Quaternion.AngleAxis(Random.value * 360f, Vector3.up) * Vector3.left * 200f;
+        }
+
+        _purchased = false;
     }
 }

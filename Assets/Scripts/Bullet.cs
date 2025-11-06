@@ -8,6 +8,8 @@ public class Bullet : MonoBehaviour
     [SerializeField] WaterSplash _waterSplashPrefab;
     [SerializeField] ParticleSystem _explosionParticlesPrefab;
     [SerializeField] ParticleSystem _smokeParticles;
+    [SerializeField] AudioSource _explosionAudio;
+    
     Vector3 _targetPosition;
 
     public System.Action OnDestroy;
@@ -31,7 +33,14 @@ public class Bullet : MonoBehaviour
 
         MeshCollider water = collision.collider.GetComponent<MeshCollider>();
         if(water) Instantiate(_waterSplashPrefab, transform.position, Quaternion.identity);
-        else Instantiate(_explosionParticlesPrefab, transform.position, Quaternion.identity);
+        else
+        {
+            Instantiate(_explosionParticlesPrefab, transform.position, Quaternion.identity);
+            _explosionAudio.transform.parent = null;
+            _explosionAudio.pitch = Random.Range(0.9f, 1.1f);
+            _explosionAudio.Play();
+            Destroy(_explosionAudio.gameObject, 1f);
+        }
 
         _smokeParticles.EnableEmission(false);
         var main = _smokeParticles.main;
@@ -45,6 +54,7 @@ public class Bullet : MonoBehaviour
     public void Fire(Vector3 direction)
     {
         _rigidbody.AddForce((direction.normalized + Vector3.up * _verticalForce * direction.magnitude) * _force);
+
     }
 
     
