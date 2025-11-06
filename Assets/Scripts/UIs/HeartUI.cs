@@ -5,6 +5,7 @@ public class HeartUI : MonoBehaviour
 {
     [SerializeField] RawImage _contour;
     [SerializeField] RawImage _image;
+    public RawImage Image { get { return _image; } }
     [SerializeField] Color _unactiveColor;
 
     bool _state = false;

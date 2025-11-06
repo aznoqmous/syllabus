@@ -13,4 +13,6 @@ MonoBehaviour:
   m_Name: Barrel
   m_EditorClassIdentifier: 
   Model: {fileID: 919132149155446097, guid: 94830854d435c4e4789865660aaa46f0, type: 3}
-  Effect: 1
+  Effect: 2
+  Value: 5
+  Text: +5 coins

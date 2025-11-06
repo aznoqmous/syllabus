@@ -26,7 +26,8 @@ public class BulletsUI : MonoBehaviour
         for (int i = 0; i < _bulletUIs.Count; i++)
         {
             HeartUI heart = _bulletUIs[i];
-            heart.SetState(i < PlayerBoat.Instance.CurrentBullets);
+            //heart.SetState(i < PlayerBoat.Instance.CurrentBullets);
+            heart.Image.color = i < PlayerBoat.Instance.CurrentBullets ? Color.white : Color.clear;
         }
     }
 

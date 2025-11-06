@@ -21,6 +21,10 @@ PrefabInstance:
       value: 20
       objectReference: {fileID: 0}
     - target: {fileID: 1237520466962553837, guid: c9e847ab492a96649917cc75cdc15bb4, type: 3}
+      propertyPath: _coinReward
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1237520466962553837, guid: c9e847ab492a96649917cc75cdc15bb4, type: 3}
       propertyPath: _fireDistance
       value: 40
       objectReference: {fileID: 0}

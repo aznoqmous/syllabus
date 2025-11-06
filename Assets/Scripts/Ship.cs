@@ -14,26 +14,35 @@ public class Ship : MonoBehaviour
 
     [SerializeField] float _bulletSpeed = 100f;
 
+    [SerializeField] float _maxPlayerDistance = 200f;
+    [SerializeField] float _hideDistance = 190f;
+
     [SerializeField] float _maxHp = 10f;
     float _currentHp = 10f;
-    public float MaxHp { get { return _maxHp; } }
+    public float MaxHp { get { return _maxHp; } set { _maxHp = value; } }
     public float CurrentHp { get { return _currentHp; } }
 
     [SerializeField] ParticleSystem _damageParticleSystem;
     [SerializeField] ParticleSystem _explosionParticleSystem;
     [SerializeField] ParticleSystem _speedParticles;
     [SerializeField] TrailRenderer _trailRenderer;
-
     [SerializeField] Animator _shipAnimator;
+
+    [SerializeField] GameObject _meshParent;
+    [SerializeField] Material _colorMaterial;
 
     [SerializeField] LayerMask _bulletLayerMask;
     Material _trailMaterial;
 
     public Vector3 TargetVelocity;
+    float _animVelocity = 0f;
 
     public bool IsAlive { get {
         return _currentHp > 0;
     }}
+
+    float _lastDamageTime = 0;
+    float _damageAnimationTime = 0.5f;
 
     public System.Action OnTakeDamage;
     public System.Action OnHeal;
@@ -45,16 +54,40 @@ public class Ship : MonoBehaviour
         UpdateParticles();
 
         _trailMaterial = _trailRenderer.material;
+
+        MeshRenderer _parentMesh = _meshParent.GetComponentInChildren<MeshRenderer>();
+        
+        _colorMaterial = new Material(_colorMaterial);
+        Game.Instance.ApplySharedMaterial(_colorMaterial, _parentMesh);
     }
 
     void Update()
     {
-        transform.localScale = Vector3.Lerp(transform.localScale, Vector3.one, Time.deltaTime * 5.0f);
+        if (!Game.Instance.IsPlaying) return;
+        float distance = transform.position.DistanceTo(PlayerBoat.Instance.transform.position);
+        if (distance > _hideDistance)
+        {
+            transform.localScale = Vector3.Lerp(transform.localScale, Vector3.zero, Time.deltaTime * 5.0f);
+        }
+        else
+        {
+            transform.localScale = Vector3.Lerp(transform.localScale, Vector3.one, Time.deltaTime * 5.0f);
+        }
+
+        if (distance > _maxPlayerDistance)
+        {
+            transform.position = PlayerBoat.Instance.GetRandomProjectedPosition(45f, _maxPlayerDistance - 20f, _maxPlayerDistance - 10f);
+            transform.localScale = Vector3.zero;
+        }
+
+
+        _lastDamageTime = Mathf.Clamp01(_lastDamageTime - Time.deltaTime);
+        _colorMaterial.SetFloat("_Ratio", _lastDamageTime / _damageAnimationTime);
     }
 
-    float _animVelocity = 0f;
     private void FixedUpdate()
     {
+        if (!Game.Instance.IsPlaying) return;
         if (IsAlive)
         {
             Rigidbody.linearVelocity = Vector3.Lerp(Rigidbody.linearVelocity, TargetVelocity * _speed, _acceleration);
@@ -140,6 +173,7 @@ public class Ship : MonoBehaviour
         UpdateParticles();
         OnTakeDamage?.Invoke();
         if (_currentHp <= 0) Die();
+        _lastDamageTime = _damageAnimationTime;
     }
 
     public void GainHealth(float value)

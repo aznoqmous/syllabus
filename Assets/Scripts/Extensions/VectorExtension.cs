@@ -33,7 +33,7 @@ public static class VectorExtension
     public static float DistanceTo(this Vector3 v, Vector3 vto)
     {
         Vector3 diff = (v - vto);
-        return Mathf.Sqrt(diff.x * diff.x + diff.y * diff.y);
+        return Mathf.Sqrt(diff.x * diff.x + diff.z * diff.z);
     }
 
     public static float Angle(this Vector2 v)

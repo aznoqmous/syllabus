@@ -6,6 +6,7 @@ public class Foe : MonoBehaviour
     [Header("Spawn")]
     [SerializeField] float _cost = 1f;
     public float Cost { get { return _cost; } }
+    [SerializeField] float _coinReward;
 
     [SerializeField] Ship _ship;
     public Ship Ship { get { return _ship; } }
@@ -18,6 +19,7 @@ public class Foe : MonoBehaviour
     [SerializeField] float _obstacleCheckDistance = 2f;
     [SerializeField] float _sideRayAngle = 30f;
     [SerializeField] LayerMask _obstacleMask;
+
 
     [Header("Fire")]
     [SerializeField] float _fireRate = 2f;
@@ -32,6 +34,8 @@ public class Foe : MonoBehaviour
 
     [Header("Loot")]
     [SerializeField] Loot _lootPrefab;
+    [SerializeField] LootResource _coinResource;
+
     Vector3 _orbitDir;
 
     float _currentSpeed = 0f;
@@ -58,9 +62,12 @@ public class Foe : MonoBehaviour
 
     void FixedUpdate()
     {
+        if (!Game.Instance.IsPlaying) return;
+
         if (_ship.IsAlive && PlayerBoat.Instance)
         {
-            
+
+
             OrbitAroundPlayer();
 
             if ((PlayerBoat.Instance.transform.position - transform.position).magnitude < _fireDistance && Time.time - _lastFireTime > _fireRate)
@@ -171,6 +178,12 @@ public class Foe : MonoBehaviour
 
     void DropLoot()
     {
-        Instantiate(_lootPrefab, transform.position, Quaternion.identity);
+        Loot loot = Instantiate(_lootPrefab, transform.position, Quaternion.identity);
+        loot.LoadRandomResource();
+        for(int i = 0; i < _coinReward; i++)
+        {
+            Loot l = Instantiate(_lootPrefab, transform.position, Quaternion.identity);
+            l.LoadResource(_coinResource);
+        }
     }
 }

@@ -6,10 +6,12 @@ public class LootResource : ScriptableObject
     public GameObject Model;
     public LootEffect Effect;
     public float Value = 1f;
+    public string Text;
 }
 
 public enum LootEffect
 {
     RestoreHealth,
-    RestoreBullet
+    RestoreBullet,
+    GainCoins
 }

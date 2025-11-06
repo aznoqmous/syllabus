@@ -830,11 +830,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _cost: 10
+  _coinReward: 0
   _ship: {fileID: 6803633620117318142}
   _orbitSpeed: 1
   _orbitRadius: 20
   _moveForce: 10
-  _avoidForce: -20
+  _avoidForce: 20
   _obstacleCheckDistance: 15
   _sideRayAngle: 30
   _obstacleMask:
@@ -846,6 +847,7 @@ MonoBehaviour:
   _hpSlider: {fileID: 3465507064902170919}
   _timedHpSlider: {fileID: 3710642033072814940}
   _lootPrefab: {fileID: 986874436092563901, guid: 92285bcf6e59c3f428adb1d2a88dc5e5, type: 3}
+  _coinResource: {fileID: 11400000, guid: 5c44dbdb9d5662d4d97b56362746baf2, type: 2}
 --- !u!4 &6712621386733600430 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3597785728983232073, guid: 143829d8321497f41aca7d894ea2b533, type: 3}

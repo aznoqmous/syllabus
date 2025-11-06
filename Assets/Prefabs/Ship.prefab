@@ -9785,16 +9785,20 @@ MonoBehaviour:
   Rigidbody: {fileID: 4365115674833641683}
   _collider: {fileID: 8068669864351721069}
   _speed: 3
-  _acceleration: 0.01
+  _acceleration: 0.1
   _bulletPrefab: {fileID: 1923915081370475327, guid: bd4775d8c2874ed4d83ac81e078deceb, type: 3}
   _bulletContainer: {fileID: 4492194524529118457}
   _bulletSpeed: 100
+  _maxPlayerDistance: 200
+  _hideDistance: 190
   _maxHp: 3
   _damageParticleSystem: {fileID: 2249150539764687996}
   _explosionParticleSystem: {fileID: 7480626176527330659, guid: 102103a152add094687927265ea46203, type: 3}
   _speedParticles: {fileID: 4391647779558020349}
   _trailRenderer: {fileID: 8240967475167129264}
   _shipAnimator: {fileID: 100046876410801501}
+  _meshParent: {fileID: 2428982382589708424}
+  _colorMaterial: {fileID: 2100000, guid: d1b6f7d6e2e837643a2fafd20f61b033, type: 2}
   _bulletLayerMask:
     serializedVersion: 2
     m_Bits: 64
@@ -9808,7 +9812,7 @@ Rigidbody:
   m_GameObject: {fileID: 4782715992843308376}
   serializedVersion: 4
   m_Mass: 10
-  m_Drag: 0
+  m_Drag: 1
   m_AngularDrag: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
   m_InertiaTensor: {x: 1, y: 1, z: 1}
