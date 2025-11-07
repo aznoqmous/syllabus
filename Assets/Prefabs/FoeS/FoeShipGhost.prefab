@@ -25,6 +25,10 @@ PrefabInstance:
       value: 30
       objectReference: {fileID: 0}
     - target: {fileID: 1237520466962553837, guid: c9e847ab492a96649917cc75cdc15bb4, type: 3}
+      propertyPath: _coinReward
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 1237520466962553837, guid: c9e847ab492a96649917cc75cdc15bb4, type: 3}
       propertyPath: _orbitSpeed
       value: 2
       objectReference: {fileID: 0}

@@ -43,7 +43,6 @@ public class Shop : MonoBehaviour
         if (PlayerBoat.Instance)
         {
             float distance = transform.position.DistanceTo(PlayerBoat.Instance.transform.position);
-            print(distance);
             if(distance > 200f)
             {
                 transform.position = PlayerBoat.Instance.GetRandomProjectedPosition(45f, 100f, 120f);

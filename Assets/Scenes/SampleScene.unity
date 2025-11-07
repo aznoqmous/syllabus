@@ -7447,7 +7447,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _slider: {fileID: 224691646}
   _handle: {fileID: 1763333005}
-  _timeBeforeBoss: 60
+  _timeBeforeBoss: 300
   _bossShipPrefab: {fileID: 362119176472729829, guid: 6681d46f5df86a24ab8fa6d9fc580818, type: 3}
   _rainParticles: {fileID: 1325811200}
   _directionalLightTransform: {fileID: 410087041}

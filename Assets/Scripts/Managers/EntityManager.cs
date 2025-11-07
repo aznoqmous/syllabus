@@ -1,9 +1,16 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
 using UnityEngine;
 
 public class EntityManager : MonoBehaviour
 {
+    public static EntityManager Instance;
+    private void Awake()
+    {
+        Instance = this;
+    }
+
     [SerializeField] List<Foe> _foeShipPrefabs;
     [SerializeField] float _spawnDistance = 100f;
 
@@ -11,6 +18,8 @@ public class EntityManager : MonoBehaviour
     [SerializeField] float _spawnInterval = 3f;
     [SerializeField] int _maxFoes = 8;
     float _nextSpawnTime = 0f;
+
+    public float Credits { get { return _credits; } set {  _credits = value; } }
 
     List<Foe> _foeList = new List<Foe>();
 
@@ -49,7 +58,7 @@ public class EntityManager : MonoBehaviour
 
     List<Foe> GetAvailableFoes()
     {
-        return _foeShipPrefabs.Where((Foe foe) => foe.Cost < _credits).ToList();
+        return _foeShipPrefabs.Where((Foe foe) => foe.Cost < _credits && foe.Cost * 5 > _credits).ToList();
     }
 
     Foe SpawnFoe(Foe foe) {
@@ -58,5 +67,10 @@ public class EntityManager : MonoBehaviour
         _foeList.Add(newFoe);
         newFoe.Ship.OnDie += () => _foeList.Remove(newFoe);
         return newFoe;
+    }
+
+    public void Reset()
+    {
+        _credits = 0;        
     }
 }

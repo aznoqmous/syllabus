@@ -66,6 +66,7 @@ public class Game : MonoBehaviour
 
     public void Restart()
     {
+        EntityManager.Instance.Reset();
         Scene scene = SceneManager.GetActiveScene();
         SceneManager.LoadScene(scene.name);
     }
