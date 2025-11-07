@@ -110,9 +110,9 @@ ScriptedImporter:
       serializedVersion: 2
       x: 635
       y: 4
-      width: 1072
-      height: 254
-    spriteID: 25d51b3adbbc49249bd86769822795fc
+      width: 1025
+      height: 206
+    spriteID: 53acf6703f6ea76419387cbba34aac35
     spriteBone: []
     spriteOutline: []
     vertices: []
@@ -120,7 +120,7 @@ ScriptedImporter:
     indices: 
     edges: []
     tessellationDetail: 0
-    uvTransform: {x: 620, y: 4}
+    uvTransform: {x: 628, y: 4}
     spritePosition: {x: 87, y: 194}
   - name: boat
     originalName: 
@@ -171,8 +171,8 @@ ScriptedImporter:
     spriteName: title
     isGroup: 0
     parentIndex: -1
-    spriteID: 25d51b3adbbc49249bd86769822795fc
-    layerID: 32
+    spriteID: 53acf6703f6ea76419387cbba34aac35
+    layerID: 40
     mosaicPosition: {x: 635, y: 4}
     flatten: 0
     isImported: 1

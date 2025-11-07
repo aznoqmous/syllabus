@@ -9,8 +9,20 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 1237520466962553837, guid: c9e847ab492a96649917cc75cdc15bb4, type: 3}
+      propertyPath: _cost
+      value: 40
+      objectReference: {fileID: 0}
+    - target: {fileID: 1237520466962553837, guid: c9e847ab492a96649917cc75cdc15bb4, type: 3}
+      propertyPath: _fireRate
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1237520466962553837, guid: c9e847ab492a96649917cc75cdc15bb4, type: 3}
       propertyPath: _moveForce
-      value: 15
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 1237520466962553837, guid: c9e847ab492a96649917cc75cdc15bb4, type: 3}
+      propertyPath: _avoidForce
+      value: 30
       objectReference: {fileID: 0}
     - target: {fileID: 1237520466962553837, guid: c9e847ab492a96649917cc75cdc15bb4, type: 3}
       propertyPath: _orbitSpeed
@@ -59,6 +71,10 @@ PrefabInstance:
     - target: {fileID: 6712621386733600430, guid: c9e847ab492a96649917cc75cdc15bb4, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6803633620117318142, guid: c9e847ab492a96649917cc75cdc15bb4, type: 3}
+      propertyPath: _maxHp
+      value: 2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects:

@@ -6,14 +6,16 @@ public class PlayerBoat : MonoBehaviour
 {
     public static PlayerBoat Instance;
 
-    [SerializeField] InputSystem_Actions _playerInputActions;
+    InputSystem_Actions _playerInputActions;
     Vector2 _movementInput = new Vector2();
 
-    [Header("World")]
+    [Header("World/UI")]
     [SerializeField] GameObject _cameraContainer;
     Camera _camera;
     [SerializeField] MeshRenderer _water;
     public Vector3 ProjectedPosition { get { return transform.position + _ship.Rigidbody.linearVelocity; } }
+    [SerializeField] StatsUI _statsCanvas;
+    [SerializeField] BulletsUI _bulletCanvas;
 
     [Header("Ship")]
     [SerializeField] Ship _ship;
@@ -21,14 +23,18 @@ public class PlayerBoat : MonoBehaviour
     public float MaxHp { get { return _ship.MaxHp;  } }
     public float CurrentHp { get { return _ship.CurrentHp; } }
 
+
+    [Header("Stats")]
     [SerializeField] float _reloadTime = 1f;
     float _currentReloadTime = 0f;
-    [SerializeField] StatsUI _statsCanvas;
-    [SerializeField] BulletsUI _bulletCanvas;
     int _currentBullets;
     public int CurrentBullets { get { return _currentBullets; }}
     [SerializeField] int _maxBullets = 3;
     public int MaxBullets { get { return _maxBullets; }}
+
+
+    [SerializeField] float _attractionDistance = 10;
+    public float AttractionDistance { get { return _attractionDistance; } }
 
     private void Awake()
     {
@@ -52,10 +58,9 @@ public class PlayerBoat : MonoBehaviour
     void Update()
     {
         _water.transform.position = transform.position;
-
         if (!Game.Instance.IsPlaying)
         {
-            _ship.TargetVelocity = Vector3.forward;
+            if(!Game.Instance.IsShop) _ship.TargetVelocity = Vector3.forward;
             return;
         }
 
@@ -67,7 +72,6 @@ public class PlayerBoat : MonoBehaviour
             {
                 MouseUI.Instance.CrossHairImage.transform.localScale  = Vector3.one * 1.5f;
                 Vector3 pos = ray.point;
-                //_ship.FireBullet(pos - transform.position);
                 _ship.FireBulletTowardPosition(pos);
             }
         }
@@ -127,7 +131,9 @@ public class PlayerBoat : MonoBehaviour
 
     public Vector3 GetRandomProjectedPosition(float angle, float minDistance, float maxDistance)
     {
-        return transform.position + (Quaternion.AngleAxis(Random.Range(-angle, angle), Vector3.up) * Ship.Rigidbody.linearVelocity.normalized) * Random.Range(minDistance, maxDistance);
+        Vector3 direction = Ship.Rigidbody.linearVelocity;
+        if (direction.magnitude == 0) direction = Quaternion.AngleAxis(Random.value * 360f, Vector3.up) * Vector3.left;
+        return transform.position + (Quaternion.AngleAxis(Random.Range(-angle, angle), Vector3.up) * direction.normalized) * Random.Range(minDistance, maxDistance);
     }
 
     [SerializeField] int _coins = 0;
@@ -136,6 +142,7 @@ public class PlayerBoat : MonoBehaviour
     {
         _coins += amount;
         _statsCanvas.UpdateCoins();
+        Game.Instance.TotalGold += amount;
     }
     public void LoseCoins(int amount)
     {
@@ -143,8 +150,6 @@ public class PlayerBoat : MonoBehaviour
         _statsCanvas.UpdateCoins();
     }
 
-    float _attractionDistance = 10;
-    public float AttractionDistance { get { return _attractionDistance; } }
     public void AddUpgrade(UpgradeResource upgrade)
     {
         switch (upgrade.Type)
@@ -169,4 +174,6 @@ public class PlayerBoat : MonoBehaviour
                 break;
         }
     }
+
+
 }

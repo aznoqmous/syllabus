@@ -16,3 +16,4 @@ MonoBehaviour:
   Effect: 2
   Value: 1
   Text: +1 coin
+  LootedAudioClip: {fileID: 8300000, guid: eaf0f66c65ebb4642b767673edfe1e54, type: 3}

@@ -829,7 +829,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5806018073e17f44b992aa6f87baaa37, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _cost: 10
+  _cost: 15
   _coinReward: 0
   _ship: {fileID: 6803633620117318142}
   _orbitSpeed: 1
@@ -841,8 +841,13 @@ MonoBehaviour:
   _obstacleMask:
     serializedVersion: 2
     m_Bits: 1792
+  _maxPlayerDistance: 200
+  _hideDistance: 190
   _fireRate: 5
   _fireDistance: 30
+  _fireCount: 1
+  _fireBurstSpeed: 0.2
+  _fireSpread: 0
   _statsUI: {fileID: 8301377264070810426}
   _hpSlider: {fileID: 3465507064902170919}
   _timedHpSlider: {fileID: 3710642033072814940}

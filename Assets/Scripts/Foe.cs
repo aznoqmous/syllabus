@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -21,9 +22,15 @@ public class Foe : MonoBehaviour
     [SerializeField] LayerMask _obstacleMask;
     float _currentSpeed = 0f;
 
+    [SerializeField] float _maxPlayerDistance = 200f;
+    [SerializeField] float _hideDistance = 190f;
+
     [Header("Fire")]
     [SerializeField] float _fireRate = 2f;
     [SerializeField] float _fireDistance = 8f;
+    [SerializeField] int _fireCount = 1; 
+    [SerializeField] float _fireBurstSpeed = 0.2f;
+    [SerializeField] float _fireSpread = 2.0f;
     float _lastFireTime = 0f;
 
     [Header("UIs")]
@@ -55,36 +62,75 @@ public class Foe : MonoBehaviour
 
     private void Update()
     {
+        if (PlayerBoat.Instance)
+        {
+            float distance = transform.position.DistanceTo(PlayerBoat.Instance.transform.position);
+            if (distance > _hideDistance)
+            {
+                transform.localScale = Vector3.Lerp(transform.localScale, Vector3.zero, Time.deltaTime * 5.0f);
+            }
+            else
+            {
+                transform.localScale = Vector3.Lerp(transform.localScale, Vector3.one, Time.deltaTime * 5.0f);
+            }
+
+            if (distance > _maxPlayerDistance)
+            {
+                transform.position = PlayerBoat.Instance.GetRandomProjectedPosition(45f, _maxPlayerDistance - 20f, _maxPlayerDistance - 10f);
+                transform.localScale = Vector3.zero;
+            }
+
+            if (_ship.IsAlive && Game.Instance.IsPlaying)
+            {
+
+
+                OrbitAroundPlayer();
+
+                if ((PlayerBoat.Instance.transform.position - transform.position).magnitude < _fireDistance && Time.time - _lastFireTime > _fireRate)
+                {
+
+                    Vector3 firePosition = PlayerBoat.Instance.ProjectedPosition;
+                    _lastFireTime = Time.time;
+                    StartCoroutine(Fire(firePosition));
+
+                    // firePosition.y = 0.2f;
+                    // Canvas ch = Instantiate(_crosshairPrefab, firePosition, Quaternion.identity);
+                    // ch.transform.eulerAngles = new Vector3(0, Random.value * 360, 0);
+                    // bullet.OnDestroy += () => Destroy(ch);
+                }
+            }
+        }
+
+
         _statsUI.transform.LookAt(Camera.main.transform.position);
         _timedHpSlider.value = Mathf.Lerp(_timedHpSlider.value, _hpSlider.value, Time.deltaTime);
+    }
+
+    IEnumerator Fire(Vector3 position)
+    {
+        for(int i = 0; i < _fireCount; i++)
+        {
+            Bullet bullet = _ship.FireBulletTowardPosition(position + Quaternion.AngleAxis(Random.value * 360f, Vector3.up) * Vector3.left * Random.value * _fireSpread);
+            _lastFireTime = Time.time;
+            yield return new WaitForSeconds(_fireBurstSpeed);
+        }
+
+        yield return new WaitForEndOfFrame();
     }
 
     void FixedUpdate()
     {
         if (!Game.Instance.IsPlaying) return;
 
-        if (_ship.IsAlive && PlayerBoat.Instance)
-        {
-
-
-            OrbitAroundPlayer();
-
-            if ((PlayerBoat.Instance.transform.position - transform.position).magnitude < _fireDistance && Time.time - _lastFireTime > _fireRate)
-            {
-
-                Vector3 firePosition = PlayerBoat.Instance.ProjectedPosition;
-                Bullet bullet = _ship.FireBulletTowardPosition(firePosition);
-                _lastFireTime = Time.time;
-
-                // firePosition.y = 0.2f;
-                // Canvas ch = Instantiate(_crosshairPrefab, firePosition, Quaternion.identity);
-                // ch.transform.eulerAngles = new Vector3(0, Random.value * 360, 0);
-                // bullet.OnDestroy += () => Destroy(ch);
-            }
-        }
+       
         float angle = Mathf.Atan2(_ship.Rigidbody.linearVelocity.x, _ship.Rigidbody.linearVelocity.z);
         transform.eulerAngles = new Vector3(0, angle * Mathf.Rad2Deg, 0);
-        _moveForce = PlayerBoat.Instance.transform.position.DistanceTo(transform.position) > 100 ? _currentSpeed * 2f : _currentSpeed;
+
+        if (PlayerBoat.Instance)
+        {
+            float distance = PlayerBoat.Instance.transform.position.DistanceTo(transform.position);
+            _moveForce =  distance > 100 ? _currentSpeed + (distance - 100f) / 10f : _currentSpeed;
+        }
     }
 
     void OrbitAroundPlayer()
@@ -166,6 +212,7 @@ public class Foe : MonoBehaviour
             Loot l = Instantiate(_lootPrefab, transform.position, Quaternion.identity);
             l.LoadResource(_coinResource);
         }
+        Game.Instance.EnemyEliminated++;
     }
 
     

@@ -16,3 +16,4 @@ MonoBehaviour:
   Effect: 0
   Value: 1
   Text: +1 health
+  LootedAudioClip: {fileID: 8300000, guid: ba19aa7e89b1ccd40ba6327f85551464, type: 3}

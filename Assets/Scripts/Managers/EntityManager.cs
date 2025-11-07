@@ -54,7 +54,7 @@ public class EntityManager : MonoBehaviour
 
     Foe SpawnFoe(Foe foe) {
         Vector3 position = PlayerBoat.Instance.transform.position + Quaternion.Euler(0, Random.value * 360f, 0) * Vector3.left * _spawnDistance;
-        Foe newFoe = Instantiate(foe, position, Quaternion.identity);
+        Foe newFoe = Instantiate(foe, position, Quaternion.identity, transform);
         _foeList.Add(newFoe);
         newFoe.Ship.OnDie += () => _foeList.Remove(newFoe);
         return newFoe;

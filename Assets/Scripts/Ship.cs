@@ -14,8 +14,7 @@ public class Ship : MonoBehaviour
 
     [SerializeField] float _bulletSpeed = 100f;
 
-    [SerializeField] float _maxPlayerDistance = 200f;
-    [SerializeField] float _hideDistance = 190f;
+
 
     [SerializeField] float _maxHp = 10f;
     float _currentHp = 10f;
@@ -65,23 +64,6 @@ public class Ship : MonoBehaviour
 
     void Update()
     {
-        float distance = transform.position.DistanceTo(PlayerBoat.Instance.transform.position);
-        if (distance > _hideDistance)
-        {
-            transform.localScale = Vector3.Lerp(transform.localScale, Vector3.zero, Time.deltaTime * 5.0f);
-        }
-        else
-        {
-            transform.localScale = Vector3.Lerp(transform.localScale, Vector3.one, Time.deltaTime * 5.0f);
-        }
-
-        if (distance > _maxPlayerDistance)
-        {
-            transform.position = PlayerBoat.Instance.GetRandomProjectedPosition(45f, _maxPlayerDistance - 20f, _maxPlayerDistance - 10f);
-            transform.localScale = Vector3.zero;
-        }
-
-
         _lastDamageTime = Mathf.Clamp01(_lastDamageTime - Time.deltaTime);
         _colorMaterial.SetFloat("_Ratio", _lastDamageTime / _damageAnimationTime);
     }
@@ -92,6 +74,7 @@ public class Ship : MonoBehaviour
         {
             Rigidbody.linearVelocity = Vector3.Lerp(Rigidbody.linearVelocity, TargetVelocity * _speed, _acceleration);
         }
+
         var main = _speedParticles.main;
         main.startLifetime = Rigidbody.linearVelocity.magnitude / 20f;
 

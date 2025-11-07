@@ -13,6 +13,8 @@ public class Shop : MonoBehaviour
     [SerializeField] Canvas _shopCanvas;
     [SerializeField] ParticleSystem _disappearParticleSystem;
     [SerializeField] Button _exitButton;
+
+    public Canvas ShopCanvas {get {return _shopCanvas;}}
     bool _isActive { get { return PlayerBoat.Instance.transform.position.DistanceTo(transform.position) < _activationDistance; } }
     bool _isOpened = false;
     bool _purchased = false;
@@ -38,7 +40,16 @@ public class Shop : MonoBehaviour
     void Update()
     {
         _tmp.transform.localScale = Vector3.Lerp(_tmp.transform.localScale, _isActive ? Vector3.one : Vector3.zero, Time.deltaTime * 10f);
-    }
+        if (PlayerBoat.Instance)
+        {
+            float distance = transform.position.DistanceTo(PlayerBoat.Instance.transform.position);
+            print(distance);
+            if(distance > 200f)
+            {
+                transform.position = PlayerBoat.Instance.GetRandomProjectedPosition(45f, 100f, 120f);
+            }
+        }
+    }   
 
     void OpenShop(InputAction.CallbackContext cb)
     {

@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Game : MonoBehaviour
 {
@@ -11,15 +12,28 @@ public class Game : MonoBehaviour
     [SerializeField] StatsUI _statsUI;
     [SerializeField] bool _isPlaying = false;
     [SerializeField] Canvas _titleCanvas;
+    [SerializeField] Shop _shop;
+
+    [Header("Stats")]
+    public int EnemyEliminated = 0;
+    public int TotalGold = 0;
+    public float TimeSpent = 0;
     public bool IsPlaying { get { return _isPlaying; } set { _isPlaying = value; } }    
+    public bool IsShop { get { return _shop.ShopCanvas.gameObject.activeInHierarchy; } }
+
+    [SerializeField] GameOverUI _gameOverCanvas;
+    [SerializeField] GameOverUI _winCanvas;
 
     void Start()
     {
         _statsUI.gameObject.SetActive(_isPlaying);
+        _titleCanvas.gameObject.SetActive(!_isPlaying);
+        PlayerBoat.Instance.Ship.OnDie += GameOver;
     }
 
     void Update()
     {
+        if (IsPlaying) TimeSpent += Time.deltaTime;
         SetTimeScale(_targetTimeScale, Time.unscaledDeltaTime * 5f);
     }
 
@@ -48,5 +62,27 @@ public class Game : MonoBehaviour
         _isPlaying = true;
         _titleCanvas.gameObject.SetActive(false);
         _statsUI.gameObject.SetActive(true);
+    }
+
+    public void Restart()
+    {
+        Scene scene = SceneManager.GetActiveScene();
+        SceneManager.LoadScene(scene.name);
+    }
+
+    public void GameOver()
+    {
+        _gameOverCanvas.UpdateStats();
+        _gameOverCanvas.gameObject.SetActive(true);
+        _statsUI.gameObject.SetActive(false);
+        _isPlaying = false;
+    }
+
+    public void Win()
+    {
+        _winCanvas.UpdateStats();
+        _winCanvas.gameObject.SetActive(true);
+        _statsUI.gameObject.SetActive(false);
+        _isPlaying = false;
     }
 }

@@ -10,6 +10,7 @@ public class FoliageManager : MonoBehaviour
 
     void Update()
     {
+        if (!PlayerBoat.Instance) return;
         foreach(Transform t in transform)
         {
             float distance = t.position.DistanceTo(PlayerBoat.Instance.transform.position);
@@ -17,7 +18,7 @@ public class FoliageManager : MonoBehaviour
             {
                 t.position = PlayerBoat.Instance.GetRandomProjectedPosition(45f, _hideDistance - _randomRadius, _hideDistance + _randomRadius);
                 t.localScale = Vector3.zero;
-                t.eulerAngles = Vector3.up * Random.value * 360f;
+                t.eulerAngles = Quaternion.AngleAxis(Random.value * 360f, Vector3.up) * t.eulerAngles;
             }
             t.localScale = Vector3.Lerp(t.localScale, distance > _hideDistance ? Vector3.zero : Vector3.one * _foliageSize, Time.deltaTime * 5f);
         }

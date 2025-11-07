@@ -13,6 +13,7 @@ public class Loot : MonoBehaviour
     [SerializeField] Canvas _canvas;
     [SerializeField] TextMeshProUGUI _tmp;
     [SerializeField] Rigidbody _rigidbody;
+    [SerializeField] AudioSource _lootedAudio;
 
     float _lifeTime = 0f;
     [SerializeField] float _maxLifeTime = 60f;
@@ -64,6 +65,7 @@ public class Loot : MonoBehaviour
         Instantiate(resource.Model, _modelContainer);
         _resource = resource;
         _tmp.text = resource.Text;
+        _lootedAudio.clip = resource.LootedAudioClip;
     }
 
     public void Erase()
@@ -73,6 +75,7 @@ public class Loot : MonoBehaviour
 
     public void PlayLootedAnim()
     {
+        _lootedAudio.PlayAtRandomPitch(0.2f);
         _collider.enabled = false;
         _animator.Play("LootLootedAnim");
         _lifeTime = 0;

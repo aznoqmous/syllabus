@@ -7,6 +7,7 @@ public class LootResource : ScriptableObject
     public LootEffect Effect;
     public float Value = 1f;
     public string Text;
+    public AudioClip LootedAudioClip;
 }
 
 public enum LootEffect
